@@ -1,0 +1,22 @@
+请求链路
+cloudflare———>dcdn———>ingress
+
+背景：
+在cloudflare的代理开启的前提下，客户端请求应用的时候，ingress通过X-Forwarded-For收集的ip往往是cloudflare的ip, 这时候改如何实现排除伪造X-Forwarded-For，后端获取的是真实的客户端ip呢？
+
+方案：
+cloudflare在规则里面转换规则自定义请求头Ali-Cdn-Real-Ip，通过ip.src获取真实ip(ip.src属于cloudflare的防火墙功能模块的内置变量，free计划的用户都可以使用)，同时cloudflare在回源dcdn的时候会默认传Cf-Connecting-Ip请求头，需要在dcdn2.0版本里面添加新的回源请求头重写Ali-Cdn-Real-Ip的值：Ali-Cdn-Real-Ip = $http_cf_connecting_ip （同时配置不允许重复）
+
+ingress需要配置
+forwarded-for-header: “Ali-Cdn-Real-Ip” #作用设置用于标识客户端的原始 IP 地址的 Header 字段
+
+坑点：
+因为阿里云的dcdn回源的时候会传请求头ali-cdn-real-ip的内容，cloudflare也会传过来Ali-Cdn-Real-Ip字段值然后透传到ingress，但是这两个获取值的方式是一样的，都是只能通过$http_ali_cdn_real_ip(不熟悉的话去了解nginx的变量)，所以就会存在重复值问题，传到ingres的其实是dcdn传过来的值，所以出现了cf的代理ip，所以必须要在dcdn那里配置回源请求头Ali-Cdn-Real-Ip=$http_cf_connecting_ip
+
+友情链接：
+ip.src
+https://developers.cloudflare.com/ruleset-engine/rules-language/fields/magic-firewall/#ipsrc
+防火墙功能
+https://developers.cloudflare.com/ruleset-engine/rules-language/fields/magic-firewall/#ipsrc
+请求头
+https://developers.cloudflare.com/fundamentals/reference/http-request-headers/
