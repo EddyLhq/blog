@@ -1,0 +1,6 @@
+kubectl----->kube-apiserver------>metrics-server------->Cadvisor-------->cgroup
+使用kubectl top的时候的数值来源:
+mem usage的值，来自于/sys/fs/cgroup/memory/docker/[containerId]/memory.usage_in_bytes。
+如果没限制内存，Limit = machine_mem，否则来自于 /sys/fs/cgroup/memory/docker/[id]/memory.limit_in_bytes。
+内存使用率 = memory.usage_in_bytes/memory.limit_in_bytes。
+一般情况下，cgroup文件夹下的内容包括CPU、内存、磁盘、网络等信息
