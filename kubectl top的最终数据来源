@@ -4,3 +4,18 @@ mem usage的值，来自于/sys/fs/cgroup/memory/docker/[containerId]/memory.usa
 如果没限制内存，Limit = machine_mem，否则来自于 /sys/fs/cgroup/memory/docker/[id]/memory.limit_in_bytes。
 内存使用率 = memory.usage_in_bytes/memory.limit_in_bytes。
 一般情况下，cgroup文件夹下的内容包括CPU、内存、磁盘、网络等信息
+device：设备控制权限
+cpuset：分配指定的CPU和内存节点
+cpu：控制CPU占用率
+cpuacct：统计CPU使用情况
+memory：限制内存的使用上限
+freezer：冻结Cgroup中的进程
+net_cls：配合（traffic controller）限制网络带宽
+net_prio：设置进程的网络流量优先级
+huge_tlb：限制HugeTLB的使用
+pref_event：允许perf工具基于cgrgoup分组做性能监测
+
+阿里云的top节点的取值来源是：
+当/proc/meminfo中有MemAvailable时：（total-MemAvailable）/total×100%。
+当/proc/meminfo中无MemAvailable时：（total–free-buffers-cached）/total×100%。
+
