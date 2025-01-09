@@ -1,0 +1,63 @@
+1.cofigMap
+Kubernetes中提供configmap，用来管理应用的配置，configmap具备热更新的能力，但只有通过目录挂载的configmap才具备热更新能力，其余通过环境变量，通过subPath挂载的文件都不能动态更新；
+kubelet有一个启动参数--sync-frequency，控制同步配置的时间间隔，它的默认值是1min，所以更新configmap的内容后，真正容器中的挂载内容变化可能在0~1min之后；
+修改一下这个值，修改为5s，然后更改configmap的数据，检查热更新延迟时间，都降低到了3s左右，但同时kubelet的资源消耗会上升，尤其运行比较多pod的node上，性能会显著下降。
+2.hostPath
+3.emptyDir
+4 local
+5.nfs
+6.subPath
+volumeMounts[*].subPath 属性可用于指定所引用的卷内的子路径，而不是其根路径：
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-lamp-site
+spec:
+    containers:
+    - name: mysql
+      image: mysql
+      env:
+      - name: MYSQL_ROOT_PASSWORD
+        value: "rootpasswd"
+      volumeMounts:
+      - mountPath: /var/lib/mysql
+        name: site-data
+        subPath: mysql
+    - name: php
+      image: php:7.0-apache
+      volumeMounts:
+      - mountPath: /var/www/html
+        name: site-data
+        subPath: html
+    volumes:
+    - name: site-data
+      persistentVolumeClaim:
+        claimName: my-lamp-site-data
+使用带有扩展环境变量的 subPath：使用 subPathExpr 字段可以基于 downward API 环境变量来构造 subPath 目录名。 subPath 和 subPathExpr 属性是互斥的。
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod1
+spec:
+  containers:
+  - name: container1
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.name
+    image: busybox:1.28
+    command: [ "sh", "-c", "while [ true ]; do echo 'Hello'; sleep 10; done | tee -a /logs/hello.txt" ]
+    volumeMounts:
+    - name: workdir1
+      mountPath: /logs
+      # 包裹变量名的是小括号，而不是大括号
+      subPathExpr: $(POD_NAME)
+  restartPolicy: Never
+  volumes:
+  - name: workdir1
+    hostPath:
+      path: /var/log/pods
+
+
