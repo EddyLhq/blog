@@ -1,0 +1,18 @@
+1.索引（index）
+2.分片（Shard）
+3.副本（Replica）
+4.文档（Document）
+4.映射（Mapping）
+mysql与es关系对照表:
+ES与MySQL对比
+MySQL	               elasticsearch
+database	            index
+table	                type(es8后将弃用)
+row	                  document
+column	              field
+schema	              mapping
+index	                everything is indexed
+sql                   query dsl
+SELECT * FROM table	  GET http://
+DATE table SET ……	    PUT http://
+group by、avg、sum	   Aggregations
