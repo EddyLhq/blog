@@ -1,0 +1,24 @@
+           Kong          Traefik     Ambassador    Tyk       Zuul 
+基本
+主要用途 企业级API管理   微服务网关     微服务网关   微服务网关  微服务网关 
+学习曲线   适中          simple        simple      适中        simple 
+成本    开源/企业版       开源        开源/pro     开源/企业版   开源 社区star
+
+部署模式	  金丝雀(企业版)	 金丝雀	     金丝雀,shadow	金丝雀	       金丝雀
+state	postgres,cassandra	kubernetes	kubernetes	redis	内存文件
+可扩展性
+扩展功能	  插件	      自己实现	         插件	        插件	自己实现
+扩展方法   	水平	        水平	        水平	水平	水平
+功能
+服务发现	 动态             	动态	     动态	       动态	    动态
+协议	http,https,websocket	http,https,grpc,websocket   	http,https,grpc,websocket   	http,https,grpc,websocket	    http,https
+基于	kong+nginx	         traefik	                        envoy	                       tyk	                        zuul
+ssl终止	yes               	yes	                          yes	                            yes                        	no
+websocket	  yes            	yes                          	yes	                            yes                        	no
+routing	 host,path,method	 host ,path	                    host ,path,header	             host,path	
+限流	      yes            	no	          yes	             yes	                                         需要开发
+熔断	yes	yes	no	yes	需其他组件
+重试	yes	yes	no	yes	yes
+健康检查	yes	no	no	yes	yes
+负载均衡算法	轮询,哈希	轮询, 加权轮询	加权轮询	轮询
+
