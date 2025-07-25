@@ -22,3 +22,8 @@ routing	 host,path,method	 host ,path	                    host ,path,header	    
 健康检查	yes	no	no	yes	yes
 负载均衡算法	轮询,哈希	轮询, 加权轮询	加权轮询	轮询
 
+
+如果只是想使用流量入口管理能力(Ingress), 推荐使用 traefik
+如果对资源消耗有严格要求，且没有太多复杂的功能定制需求， 推荐使用 linkerd2 + traefik
+如果是一个比较大的项目，期望通过一套方案解决所有的网络问题，推荐使用 istio
+如果需要管理出口流量，推荐使用istio
